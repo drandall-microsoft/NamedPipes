@@ -30,3 +30,9 @@
 *.exe
 *.out
 *.app
+
+# intermediate files
+*/out/*
+*/obj/*
+*/bin/*
+*/.vs/*
