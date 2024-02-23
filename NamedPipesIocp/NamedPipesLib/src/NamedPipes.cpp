@@ -5,6 +5,7 @@
 #include <sstream>
 #include <set>
 #include <chrono>
+#include <thread>
 
 namespace {
 	using Bytes = DWORD;
