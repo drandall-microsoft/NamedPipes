@@ -1,6 +1,6 @@
 ﻿using System.IO.Pipes;
 
-var pipe = new NamedPipeClientStream("ExamplePipeName");
+var pipe = new NamedPipeClientStream("SqTechPipe");
 Console.WriteLine("Connecting to server");
 pipe.Connect();
 Console.WriteLine("Commander Connected!");

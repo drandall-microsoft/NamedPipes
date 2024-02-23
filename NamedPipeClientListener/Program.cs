@@ -3,7 +3,7 @@ using System.IO.Pipes;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-var pipe = new NamedPipeClientStream("ExamplePipeName");
+var pipe = new NamedPipeClientStream("SqTechPipe");
 
 Console.WriteLine("Connecting to server");
 pipe.Connect();
