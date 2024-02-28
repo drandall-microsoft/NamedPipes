@@ -60,6 +60,8 @@ namespace {
 
 namespace Np2 {
 	void Write(std::string_view msg) {
+		if (Client) Client->WriteAsync(msg);
+
 		for (auto& listener : Listeners) {
 			if (listener.Active) {
 				listener.WriteAsync(msg);

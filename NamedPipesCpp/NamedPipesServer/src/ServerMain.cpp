@@ -42,6 +42,8 @@ int main() {
 
 bool HandleRequest(const std::string& message, std::ostream&) {
 	printf("Server received message %s\n", message.c_str());
+	printf("Echoing message back\n");
+	Np2::Write(message);
 	return true;
 }
 

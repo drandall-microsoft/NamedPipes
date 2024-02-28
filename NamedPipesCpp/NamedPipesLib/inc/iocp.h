@@ -89,6 +89,7 @@ namespace beam
 					overlapped_op* op = reinterpret_cast<overlapped_op*>(ovi);
 					op->complete(std::error_code(::GetLastError(), std::system_category()), bt);
 					delete op;
+					break;
 				}
 
 				if (ovi == nullptr)

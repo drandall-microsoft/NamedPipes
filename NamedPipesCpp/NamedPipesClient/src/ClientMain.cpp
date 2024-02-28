@@ -40,8 +40,16 @@ bool OnMessage(const std::string& message, std::ostream&) {
 int main() {
 	Np2::StartClient("SqTechPipe", OnMessage);
 
-	std::cout << "Client connected.  Press any key to stop\n";
-	getchar();
+	std::cout << "Client connected\n";
+	std::string msg;
+	while (true) {
+		std::cout << "Enter a message to send to server\n";
+		std::cin >> msg;
+		if (msg == "exit") break;
+
+		Np2::Write(msg);
+	}
+
 	Np2::StopClient();
 }
 /*
