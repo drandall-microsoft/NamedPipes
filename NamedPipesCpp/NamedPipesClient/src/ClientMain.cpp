@@ -1,32 +1,50 @@
 
 #include "NamedPipes.h"
+
 #include <chrono>
 #include <iostream>
 #include <thread>
 
+/*
+#include "ToolClient.h"
+
 bool Stopping{ false };
-bool HandleRequest(const std::string& message, std::ostream&) {
-	// static int messageCount = 0;
-	// static auto start = std::chrono::high_resolution_clock::now();
-	// constexpr size_t expectedCount = 271892; //4k
-	// //constexpr size_t expectedCount = 17271; //64k
-	// //constexpr size_t expectedCount = 404; //10Mb
-	// messageCount++;
-	
-	// if (messageCount % expectedCount == 0) {
-	// 	auto now = std::chrono::high_resolution_clock::now();
-	// 	auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - start).count();
-	// 	printf("Elapsed time: %lldms\n", elapsed);
-	// }
-	// else if (messageCount % expectedCount == 1) {
-	// 	start = std::chrono::high_resolution_clock::now();
-	// }
-	//printf("Message %d", messageCount);
-	printf("Client received message %s\n", message.c_str());
-	//printf("Client received message of size %d\n", message.size());
+bool OnRequest(const std::string& message) {
+	printf("Client received message of size %ZU\n", message.size());
 	return true;
 }
 
+int main() {
+	auto& client = IOCP::CreateClient("SqTechPipe", OnRequest);
+
+	std::string message;
+	while (true) {
+		std::cout << "Type message to send to server\n";
+		std::getline(std::cin, message);
+		if (message.empty()) {
+			break;
+		}
+
+		IOCP::SendToServer(message);
+	}
+}
+*/
+
+#include "Np2.h"
+
+bool OnMessage(const std::string& message, std::ostream&) {
+	printf("Client recieved message: %s\n", message.c_str());
+	return true;
+}
+
+int main() {
+	Np2::StartClient("SqTechPipe", OnMessage);
+
+	std::cout << "Client connected.  Press any key to stop\n";
+	getchar();
+	Np2::StopClient();
+}
+/*
 void TickClient() {
 	auto& client = NamedPipes::StartClient("SqTechPipe", HandleRequest);
 	NamedPipes::Write("listener");
@@ -40,20 +58,21 @@ void TickClient() {
 int main() {
 	auto tickThread = std::thread(TickClient);
 
-	std::string request;
+	std::string message;
 	while (true) {
 		std::cout << "Type message to send to server\n";
-		std::getline(std::cin, request);
+		std::getline(std::cin, message);
 
-		if (request.empty()) {
+		if (message.empty()) {
 			Stopping = true;
 			break;
 		}
 
-		NamedPipes::Write(request);
+		NamedPipes::Write(message);
 	}
 	tickThread.join();
 }
+*/
 
 /*
 #include "iocp.h"

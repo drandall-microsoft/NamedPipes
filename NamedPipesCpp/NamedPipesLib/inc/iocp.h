@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __beam_iocp_h__
+#define __beam_iocp_h__
 
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
@@ -26,6 +27,7 @@ namespace beam
 			Internal = 0;
 			InternalHigh = 0;
 		}
+
 		~overlapped_op()
 		{
 			::CloseHandle(hEvent);
@@ -34,7 +36,7 @@ namespace beam
 		void* obj;
 		std::function<void(std::error_code, size_t)> on_complete;
 
-		void complete(std::error_code ec, size_t len)
+		void complete(std::error_code ec, size_t len) const
 		{
 			if (on_complete)
 			{
@@ -97,6 +99,11 @@ namespace beam
 				delete op;
 			}
 		}
+
+		HANDLE handle() const
+		{
+			return handle_;
+		}	
 	};
 
 	class pipe
@@ -135,10 +142,6 @@ namespace beam
 			handle_ = CreateFileA(name.c_str(), GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, FILE_FLAG_OVERLAPPED, 0);
 			if (handle_ == INVALID_HANDLE_VALUE)
 				throw std::runtime_error("couldn't connect to server");
-			//
-			DWORD readMode = PIPE_READMODE_MESSAGE;
-			SetNamedPipeHandleState(handle_, &readMode, nullptr, nullptr);
-
 			context_.associate(*this);
 		}
 
@@ -147,7 +150,7 @@ namespace beam
 		{
 			connect(name);
 			overlapped_op* op = new overlapped_op{ this, on_complete };
-			PostQueuedCompletionStatus(handle_, 0, 0, op);
+			PostQueuedCompletionStatus(context_.handle(), 0, 0, op);
 		}
 
 		template <typename OnCompletion>
@@ -165,8 +168,7 @@ namespace beam
 			}
 			else
 			{
-				op->complete(std::error_code{}, 0);
-				delete op;
+				PostQueuedCompletionStatus(context_.handle(), 0, 0, nullptr);
 			}
 		}
 
@@ -186,7 +188,7 @@ namespace beam
 			}
 			else
 			{
-				PostQueuedCompletionStatus(handle_, written, 0, op);;
+				PostQueuedCompletionStatus(context_.handle(), written, 0, nullptr);
 			}
 		}
 
@@ -206,7 +208,7 @@ namespace beam
 			}
 			else
 			{
-				PostQueuedCompletionStatus(handle_, read, 0, op);
+				PostQueuedCompletionStatus(context_.handle(), read, 0, nullptr);
 			}
 		}
 
@@ -219,3 +221,5 @@ namespace beam
 		HANDLE handle_;
 	};
 }
+
+#endif //__beam_iocp_h__

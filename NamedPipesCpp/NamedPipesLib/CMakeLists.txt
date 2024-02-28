@@ -13,4 +13,5 @@ PUBLIC
 target_sources(${PROJECT_NAME}
 PRIVATE
 	"src/NamedPipes.cpp"
-)
+	"src/tool_server.cpp"
+  "inc/ToolServer.h" "src/ToolServer.cpp" "inc/Np2.h" "src/Np2.cpp")

@@ -1,7 +1,8 @@
-#include "NamedPipes.h"
 #include <chrono>
 #include <iostream>
 #include <thread>
+/*
+#include "NamedPipes.h"
 
 bool Stopping{ false };
 bool HandleRequest(const std::string& message, std::ostream&) {
@@ -35,7 +36,28 @@ int main() {
 	}
 	tickThread.join();
 }
+*/
 
+#include "Np2.h"
+
+bool HandleRequest(const std::string& message, std::ostream&) {
+	printf("Server received message %s\n", message.c_str());
+	return true;
+}
+
+int main() {
+	Np2::StartServer("SqTechPipe", HandleRequest);
+	std::string msg;
+	while (true) {
+		std::cout << "Enter a message\n";
+		std::cin >> msg;
+		if (msg == "exit") break;
+
+		Np2::Write(msg);
+	}
+
+	Np2::StopServer();
+}
 
 /*
 #include "iocp.h"
